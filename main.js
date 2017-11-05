@@ -1,9 +1,21 @@
+// configuration settings
 const menucolors = ['#66004f','#03696b','#445877','#362170'];
+var menuwidth = 30
+var contentheight = 180;
 
-var contentheight;
+// automatically calculated based on the above
+var menuheightfirst;
+var menuheight;
 var contentwidth;
 
+// core settings
 var indexactive = -1;
+
+function set_dimensions() {
+	console.debug(contentwidth);
+	console.debug($('body').width());
+	console.debug($('body'));
+}
 
 // content_activate()
 // 	Activates a given content menu
@@ -24,10 +36,23 @@ function content_activate(index) {
 	});
 }
 
-// Setup content heights and widths
+// Setup heights and widths
 $(document).ready(function() {
-	contentheight = ((menu.length * 60 + menu.length - 1)) + 'px';
-	contentwidth = $('body').width() - 60;
+	menuheight = Math.round(contentheight / menu.length);
+
+	// adjust the first menu for rounding if necessary
+	if(menuheight * menu.length < contentheight) {
+		menuheightfirst = menuheight + (contentheight - (menuheight * menu.length));
+	} else if(menuheight * menu.length > contentheight) {
+		menuheightfirst = menuheight - ((menuheight * menu.length) - contentheight);
+	} else {
+		menuheightfirst = menuheight;
+	}
+
+	contentwidth = $('body').width() - menuwidth;
+
+	// add spacing for borders
+	contentheight += (menu.length - 1);
 });
 
 // Create our menu structure
@@ -38,7 +63,7 @@ $(document).ready(function() {
 	var i = 0;
 	menu.forEach(function(element) {
 		var menubordertop = (i == 0 ? 'none' : '1px solid black');
-		var menublock = $('<div/>').attr('id', 'menublock' + i).addClass('menublock').css('border-top', menubordertop).css('background-color', menucolors[i]).data('index', i).appendTo(menuobj);
+		var menublock = $('<div/>').attr('id', 'menublock' + i).addClass('menublock').height(i == 0 ? menuheightfirst : menuheight).width(menuwidth).css('border-top', menubordertop).css('background-color', menucolors[i]).data('index', i).appendTo(menuobj);
 
 		menublock.mouseenter(function() {
 			var index = $(menublock).data('index');
@@ -46,7 +71,7 @@ $(document).ready(function() {
 		});
 
 		// create each of the menu content divs
-		var content = $('<div/>').attr('id', 'content' + i).addClass('content').height(contentheight).css('background-color', menucolors[i]).appendTo('body');
+		var content = $('<div/>').attr('id', 'content' + i).addClass('content').height(contentheight).css('left', menuwidth).css('background-color', menucolors[i]).appendTo('body');
 
 		element.forEach(function(element) {
 			// 

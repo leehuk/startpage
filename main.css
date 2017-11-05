@@ -25,15 +25,12 @@ h2 {
 
 .menublock {
 	position: relative;
-	height: 60px;
-	width: 59px;
 	z-index: 3;
 }
 
 div.content {
 	position: absolute;
 	top: 50vh;
-	left: 60px;
 	width: 0vw;
 	align-items: center;
 	justify-content: space-around;
