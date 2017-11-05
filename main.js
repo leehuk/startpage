@@ -2,6 +2,7 @@
 const menucolors = ['#66004f','#03696b','#445877','#362170'];
 var menuwidth = 30
 var contentheight = 180;
+const menuiconurl = 'https://raw.githubusercontent.com/leehuk/startpage-icons/master/'
 
 // automatically calculated based on the above
 var menuheightfirst;
@@ -80,7 +81,7 @@ $(document).ready(function() {
 
 			// add image to figure if we have one
 			if(typeof element.icon !== 'undefined') {
-				$('<img/>').attr('src', 'icons/' + element.icon + '.png').appendTo(contentfig);
+				$('<img/>').attr('src', menuiconurl + element.icon).appendTo(contentfig);
 			}
 
 				var contentcaption = $('<figcaption/>').addClass('contentcaption').appendTo(contentfig);
