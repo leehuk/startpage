@@ -30,10 +30,10 @@ function content_activate(index) {
 
 	// hide all content elements and re-display the new one
 	$('.content').width('0vw').css('display', 'none').css('visibility', 'hidden');
-	$('.content').children('a').children('div').css('visibility', 'hidden');
+	$('.content').children('a').children('figure').css('visibility', 'hidden');
 	$('#content' + index).css('display', 'flex').css('visibility', 'visible');
 	$('#content' + index).animate({ width: contentwidth }, 'normal', function() { 
-		$(this).children('a').children('div').css('visibility', 'visible') 
+		$(this).children('a').children('figure').css('visibility', 'visible') 
 	});
 }
 
