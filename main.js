@@ -1,67 +1,85 @@
-const menu = [
+const menucolors = ['#66004f','#03696b','#445877','#362170'];
 
-{
-	'title': 'Productivity',
-	'content': [
-	{'name': 'Test', 'url': 'https://www.example.com'},
-	{'name': 'Test', 'url': 'https://www.example.com'},
-	{'name': 'Test', 'url': 'https://www.example.com'},
-	{'name': 'Test', 'url': 'https://www.example.com'},
-	{'name': 'Test', 'url': 'https://www.example.com'},
-	{'name': 'Test', 'url': 'https://www.example.com'},
-	{'name': 'Test', 'url': 'https://www.example.com'}
-	]
-},
-{
-	'title': 'Productivity',
-	'content': []
-},
-{
-	'title': 'Productivity',
-	'content': []
-}];
+var contentheight;
+var contentwidth;
 
-const menucolors = ['#3399ff','#cc6699','#ff9933','#b82e8a'];
+var indexactive = -1;
 
+// content_activate()
+// 	Activates a given content menu
+function content_activate(index) {
+	// mark the current active menu for hotkeys
+	indexactive = index;
+
+	// set borders to black, and this one to its native colour
+	$('.menublock').css('border-right', '1px solid black');
+	$('#menublock' + index).css('border-right', '1px solid ' + menucolors[index]);
+
+	// hide all content elements and re-display the new one
+	$('.content').width('0vw').css('display', 'none').css('visibility', 'hidden');
+	$('.content').children('a').children('div').css('visibility', 'hidden');
+	$('#content' + index).css('display', 'flex').css('visibility', 'visible');
+	$('#content' + index).animate({ width: contentwidth }, 'normal', function() { 
+		$(this).children('a').children('div').css('visibility', 'visible') 
+	});
+}
+
+// Setup content heights and widths
 $(document).ready(function() {
-	var menuheightr = Math.round(100/menu.length);
-	var menuheight = menuheightr + 'vh';
-	var menuheightf = (menuheightr < 100) ? ((100 - (menuheightr * (menu.length - 1))) + 'vh') : menuheight;
+	contentheight = ((menu.length * 60 + menu.length - 1)) + 'px';
+	contentwidth = $('body').width() - 60;
+});
 
-	var menuobj = $('<div/>').addClass('menu').appendTo('body');
+// Create our menu structure
+$(document).ready(function() {
+	var menuobj = $('div.menu');
 
+	// loop through adding each of our menus
 	var i = 0;
 	menu.forEach(function(element) {
-		var menublock = $('<div/>').addClass('menublock').css('background-color', menucolors[i]).height(i == 0 ? menuheightf : menuheight).data('index', i).appendTo(menuobj);
+		var menubordertop = (i == 0 ? 'none' : '1px solid black');
+		var menublock = $('<div/>').attr('id', 'menublock' + i).addClass('menublock').css('border-top', menubordertop).css('background-color', menucolors[i]).data('index', i).appendTo(menuobj);
 
-		menublock.mouseenter(function(ev) {
+		menublock.mouseenter(function() {
 			var index = $(menublock).data('index');
-
-			// hide all content elements and re-display the new one
-			$('.content').css('display', 'none').css('visibility', 'hidden');
-			$('#content' + index).css('display', 'flex').css('visibility', 'visible');
-
-			$('.menuborderleft').css('background-color', menucolors[index]);
-			$('.menubordertop').css('background', 'linear-gradient(to right, ' + menucolors[index] +  ', black)');
-			
+			content_activate(index);
 		});
 
-		var menutitle = $('<div/>').addClass('menutitle').appendTo(menublock);
-		var menutitlespan = $('<span/>').html(element.title).appendTo(menutitle);
+		// create each of the menu content divs
+		var content = $('<div/>').attr('id', 'content' + i).addClass('content').height(contentheight).css('background-color', menucolors[i]).appendTo('body');
 
-		var content_disp = i == 0 ? 'flex' : 'none';
-		var content_visb = i == 0 ? 'visible' : 'hidden';
-		var content = $('<div/>').attr('id', 'content' + i).addClass('content').css('display', content_disp).css('visibility', content_visb).appendTo('body');
+		element.forEach(function(element) {
+			// 
+			var contentlink = $('<a/>').addClass('contentlink').attr('href', element.url).appendTo(content);
+			var contentfig = $('<figure/>').addClass('contentfig').appendTo(contentlink);
 
-		element.content.forEach(function(element) {
-			var contentitem = $('<span>').addClass('contentitem').appendTo(content);
-			$('<a/>').attr('href', element.url).html(element.name).appendTo(contentitem);
+			// add image to figure if we have one
+			if(typeof element.icon !== 'undefined') {
+				$('<img/>').attr('src', 'icons/' + element.icon + '.png').appendTo(contentfig);
+			}
+
+				var contentcaption = $('<figcaption/>').addClass('contentcaption').appendTo(contentfig);
+				$('<span/>').html(element.name).appendTo(contentcaption);
 		});
 
 		i++;
 	});
+});
 
-	$('<div/>').addClass('menuborderleft').css('background-color', menucolors[0]).appendTo('body');
-	$('<div/>').addClass('menubordertop').css('background', 'linear-gradient(to right, ' + menucolors[0] + ', black)').appendTo('body');
+// Add hotkeys, letters for menus, numbers for items within a menu
+$(document).ready(function() {
+	$('body').on("keydown", function(ev) {
+		// a-...
+		if(ev.keyCode >= 65 && ev.keyCode < (65 + menu.length)) {
+			content_activate(ev.keyCode - 65);
+		// 1-9
+		} else if(ev.keyCode >= 49 && ev.keyCode <= 57 && indexactive >= 0) {
+			var entry = ev.keyCode - 49;
+			// validate we actually have a menu entry for that number
+			if(typeof menu[indexactive][entry] !== 'undefined' && typeof menu[indexactive][entry].url !== 'undefined') {
+				document.location = menu[indexactive][entry].url;
+			}
+		}
+	});
 });
 
