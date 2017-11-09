@@ -2,7 +2,7 @@
 const menucolors = ['#66004f','#03696b','#445877','#6d6f72','#362170','#040b51','#7c307f'];
 var menuwidth = 30
 var contentheight = 180;
-const menuiconurl = 'https://raw.githubusercontent.com/leehuk/startpage-icons/master/';
+const menuiconurl = 'icons/';
 
 // automatically calculated based on the above
 var menuheightfirst;
